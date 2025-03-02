@@ -1,11 +1,9 @@
-import express from 'express'
+import { Router } from 'express';
+import { createUser, LoginUser } from '../controllers/User';
 
-const userRoutes = express.Router(); // Use Router instead of express()
+const userRoutes = Router();
 
-userRoutes.post('/login', (req, res) => {
-    console.log("logsfin bodysf  ", req.body)
-    res.send(req.body)
+userRoutes.post('/login', LoginUser);
+userRoutes.post('/signup', createUser);
 
-})
-
-export default userRoutes
+export default userRoutes;

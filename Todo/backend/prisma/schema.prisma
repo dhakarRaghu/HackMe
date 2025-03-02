@@ -20,7 +20,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  todo   Todo[]
+  todos     Todo[]
 }
 
 model Todo {
@@ -28,7 +28,6 @@ model Todo {
   title     String
   content   String?
   completed Boolean  @default(false)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    Int
