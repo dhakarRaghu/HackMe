@@ -2,17 +2,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
+
+  const navigator = useNavigate();
 
   async function handleLogin() {
     console.log(username, password);
     try {
       const res = await axios.post('http://localhost:5001/api/user/signup', { email: username, password });
+      setTimeout(() => {
+        navigator('/login'),
+        1000
+        });
       console.log(res);
     } catch (err) {
       console.log(err);

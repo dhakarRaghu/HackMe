@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
@@ -24,12 +24,12 @@ model User {
 }
 
 model Todo {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   title     String
   content   String?
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
 }
