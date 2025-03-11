@@ -1,17 +1,24 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { getALLBlogs } from "@/lib/query";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+interface Blog {
+  id: number;
+  title: string;
+  content: string | null;
+  username: string;
+  updatedAt: Date;
+}
 
-export default async function Home() {
+export default function Home() {
 
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);   // like vector of vector
   useEffect(() => {
     const fetchData = async () => {
       const data = await getALLBlogs();
-      setBlogs();
+      setBlogs(data);
     };
     fetchData();
   }, []);
@@ -27,9 +34,26 @@ export default async function Home() {
           </Button>
         </Link>
       </div>
-       
 
-     
+      {blogs && blogs.map((blog) =>{
+        return (
+          <div>
+          <div key={blog.id} className="flex justify-center mt-8">
+            <div className="w-1/2 flex flex-between justify-between bg-gray-800 p-4 ">
+              <h1 className="text-2xl font-bold">title : {blog.title}</h1>
+              <p className="text-sm text-white">by {blog.username}</p>
+              <p className="text-sm text-white">Last updated: {blog.updatedAt.toLocaleDateString()}</p>
+              </div>
+             </div>
+              <div className="flex justify-center">
+              <p className=" p-4 w-1/2 flex flex-between justify-between bg-gray-800 p-4 ">
+                Content: {blog.content}</p>
+            </div>
+
+          </div>
+        );
+      })}
+       
     </div>
   );
 }

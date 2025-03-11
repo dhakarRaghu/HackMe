@@ -1,4 +1,4 @@
-"use server";
+'use server'
 
 import { prisma } from "@/lib/db";
 
@@ -31,6 +31,7 @@ export async function saveBlog(blog: { title: string; content: string; username:
 export async function getALLBlogs() {
     try {
         const data = await prisma.blog.findMany();
+        console.log(data);
         return data;
     }
     catch (err) {

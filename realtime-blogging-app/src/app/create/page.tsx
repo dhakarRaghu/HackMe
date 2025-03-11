@@ -25,7 +25,13 @@ export default function CreateBlog() {
 //     }
 // }
   
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
+  setContent(document);
+  if (!title || !content || !author) {
+    alert("Please fill all fields");
+    return;
+  }
+  try {
     const res = await fetch("/api/saveblog", {
       method: "POST",
       headers: {
@@ -34,12 +40,63 @@ export default function CreateBlog() {
       body: JSON.stringify({ title, content, username: author }),
     });
     const data = await res.json();
-    console.log(data);
-    alert(data);
+    console.log("Response:", data);
+    alert(data.message || "Blog created successfully!");
     setTitle("");
     setContent("");
     setAuthor("");
-  };
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Failed to create blog.");
+  }
+};
+
+  const [document , setDocument] = useState("");
+  const [socket , setSocket] = useState<WebSocket | null>(null);
+  useEffect(()=>{
+    const ws = new WebSocket("ws://localhost:5001");
+     setSocket(ws);
+      ws.onopen = () =>{
+        console.log("connected to server");
+      }
+
+      ws.onmessage = (e) =>{
+          try {
+            const message = JSON.parse(e.data);
+
+            if(message.type === "init"){
+              setDocument(message.data);
+            }
+            else if(message.type === "update"){
+               setDocument(message.data);
+            }
+          }
+          catch (err) {
+            console.error(err);
+          }
+      }
+       ws.onclose = () =>{
+          console.log("disconnected");
+        }
+        ws.onerror = (err) =>{
+          console.error(err);
+        }
+
+        return () => {
+          ws.close();
+        }
+      
+    } , []);
+
+  
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>{
+    const data = e.target.value;
+    setDocument(data);
+    if(socket  && socket.readyState === socket.OPEN){
+      socket.send(JSON.stringify({type: "update" , data 
+      }));
+    }
+  }
 
   return (
      <div>
@@ -65,10 +122,11 @@ export default function CreateBlog() {
        
       <div className="text-2xl  mt-8 py-3 px-6 gap-4">
         <textarea placeholder="Content" className="border-2 border-gray-300 w-160 h-60 px-6 rounded-md p-2"
-        onChange={(e) => {
-          setContent(e.target.value);
-        }}
-        value={content}
+        onChange={handleChange}
+        // onChange={(e) => {
+        //   setContent(e.target.value);
+        // }}
+        value={document}
         />
        
       </div>
